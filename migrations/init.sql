@@ -1,0 +1,28 @@
+CREATE TABLE teams (
+    name VARCHAR(255) PRIMARY KEY,
+    id SERIAL UNIQUE NOT NULL
+    -- created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE users (
+    id VARCHAR(50) PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    team_id INTEGER NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+CREATE TABLE pull_requests (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    author_id VARCHAR(50) NOT NULL REFERENCES users(id),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('OPEN', 'MERGED')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    merged_at TIMESTAMP NULL
+);
+
+CREATE TABLE pr_reviewers (
+    pr_id VARCHAR(50) NOT NULL REFERENCES pull_requests(id) ON DELETE CASCADE,
+    reviewer_id VARCHAR(50) NOT NULL REFERENCES users(id),
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (pr_id, reviewer_id)
+);
