@@ -53,7 +53,7 @@ func (s *PullRequestService) CreatePR(
 		return nil, err
 	}
 	if !isActive {
-		return nil, err // TODO: models.ErrNoCandidate
+		return nil, models.ValidationError{Message: "pr author is not active"}
 	}
 
 	excludeUserIDs := []string{req.AuthorId}
