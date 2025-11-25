@@ -33,7 +33,7 @@ func (r *teamRepo) UpsertTeam(ctx context.Context, team *models.Team) error {
 
 	for _, m := range team.Members {
 		_, err = tx.ExecContext(ctx,
-			`INSERT INTO users (user_id, username, team_id, is_active)
+			`INSERT INTO users (id, username, team_id, is_active)
 			 VALUES ($1, $2, $3, $4)`,
 			m.UserId, m.Username, teamID, m.IsActive,
 		)
@@ -61,7 +61,7 @@ func (r *teamRepo) GetTeamByName(ctx context.Context, teamName string) (*models.
 	}
 
 	rows, err := r.db.QueryContext(ctx,
-		`SELECT user_id, username, is_active FROM users WHERE team_id = $1 ORDER BY username`,
+		`SELECT id, username, is_active FROM users WHERE team_id = $1 ORDER BY username`,
 		teamID,
 	)
 	if err != nil {
