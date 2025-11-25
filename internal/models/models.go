@@ -7,12 +7,12 @@ import (
 type ErrorResponseErrorCode string
 
 const (
-	TEAMEXISTS  ErrorResponseErrorCode = "TEAM_EXISTS"
-	PREXISTS    ErrorResponseErrorCode = "PR_EXISTS"
-	PRMERGED    ErrorResponseErrorCode = "PR_MERGED"
-	NOTASSIGNED ErrorResponseErrorCode = "NOT_ASSIGNED"
-	NOCANDIDATE ErrorResponseErrorCode = "NO_CANDIDATE"
-	NOTFOUND    ErrorResponseErrorCode = "NOT_FOUND"
+	TEAM_EXISTS  ErrorResponseErrorCode = "TEAM_EXISTS"
+	PR_EXISTS    ErrorResponseErrorCode = "PR_EXISTS"
+	PR_MERGED    ErrorResponseErrorCode = "PR_MERGED"
+	NOT_ASSIGNED ErrorResponseErrorCode = "NOT_ASSIGNED"
+	NO_CANDIDATE ErrorResponseErrorCode = "NO_CANDIDATE"
+	NOT_FOUND    ErrorResponseErrorCode = "NOT_FOUND"
 )
 
 type ErrorResponse struct {
