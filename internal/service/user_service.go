@@ -6,12 +6,6 @@ import (
 	"github.com/Mazzy1005/PR-Reviewer-Assignment-Service/internal/models"
 )
 
-// type UserRepository interface {
-// 	SetUserActive(ctx context.Context, userID string, isActive bool) (*models.User, error)
-// 	GetActiveUsersByTeamID(ctx context.Context, teamID int) ([]string, error)
-// 	GetUserTeamIDAndActive(ctx context.Context, userID string) (teamID int, isActive bool, err error)
-// }
-
 type UserRepository interface {
 	SetUserActive(ctx context.Context, userID string, isActive bool) (*models.User, error)
 	GetUserTeamIDAndActive(ctx context.Context, userID string) (teamID int, isActive bool, err error)
