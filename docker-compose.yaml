@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  avito-shop-service:
+  pr-reviewers-service:
       build: .
-      container_name: avito-shop-service
+      container_name: pr-reviewers-service
       ports:
         - "8080:8080"
       environment:

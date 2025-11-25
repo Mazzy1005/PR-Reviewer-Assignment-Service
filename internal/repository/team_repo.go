@@ -22,6 +22,15 @@ func (r *teamRepo) UpsertTeam(ctx context.Context, team *models.Team) error {
 	}
 	defer tx.Rollback()
 
+	var exists bool
+	err = tx.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM teams WHERE name = $1)`, team.TeamName).Scan(&exists)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return models.NewAppError(models.TEAM_EXISTS)
+	}
+
 	var teamID int
 	err = tx.QueryRowContext(ctx,
 		`INSERT INTO teams (name) VALUES ($1) RETURNING id`,
@@ -34,7 +43,11 @@ func (r *teamRepo) UpsertTeam(ctx context.Context, team *models.Team) error {
 	for _, m := range team.Members {
 		_, err = tx.ExecContext(ctx,
 			`INSERT INTO users (id, username, team_id, is_active)
-			 VALUES ($1, $2, $3, $4)`,
+             VALUES ($1, $2, $3, $4)
+             ON CONFLICT (id) DO UPDATE SET
+                 username = EXCLUDED.username,
+                 team_id = EXCLUDED.team_id,
+                 is_active = EXCLUDED.is_active`,
 			m.UserId, m.Username, teamID, m.IsActive,
 		)
 		if err != nil {
@@ -54,7 +67,7 @@ func (r *teamRepo) GetTeamByName(ctx context.Context, teamName string) (*models.
 	var teamID int
 	err := r.db.QueryRowContext(ctx, `SELECT id FROM teams WHERE name = $1`, teamName).Scan(&teamID)
 	if err == sql.ErrNoRows {
-		return nil, err // TODO: models.NOT_FOUND
+		return nil, models.NewAppError(models.NOT_FOUND)
 	}
 	if err != nil {
 		return nil, err
@@ -84,7 +97,7 @@ func (r *teamRepo) GetTeamIDByName(ctx context.Context, teamName string) (int, e
 	var id int
 	err := r.db.QueryRowContext(ctx, `SELECT id FROM teams WHERE name = $1`, teamName).Scan(&id)
 	if err == sql.ErrNoRows {
-		return 0, err //TODO: models.NOT_FOUND
+		return 0, models.NewAppError(models.NOT_FOUND)
 	}
 	if err != nil {
 		return 0, err

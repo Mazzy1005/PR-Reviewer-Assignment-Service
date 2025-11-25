@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -22,17 +21,31 @@ func main() {
 	defer db.Close()
 
 	mux := http.NewServeMux()
+
 	teamHandler := handlers.NewTeamHandler(service.NewTeamService(repository.NewTeamRepo(db)))
 
+	prHandler := handlers.NewPullRequestHandler(
+		service.NewPullRequestService(
+			repository.NewPullRequestRepo(db),
+			repository.NewUserRepo(db),
+			repository.NewTeamRepo(db),
+		),
+	)
+
+	userHandler := handlers.NewUserHandler(
+		service.NewUserService(
+			repository.NewUserRepo(db),
+			repository.NewPullRequestRepo(db),
+		),
+	)
+
+	mux.HandleFunc("POST /pullRequest/create", prHandler.Create)
+	mux.HandleFunc("POST /pullRequest/reassign", prHandler.Reassign)
+	mux.HandleFunc("POST /pullRequest/merge", prHandler.Merge)
+	mux.HandleFunc("POST /users/setIsActive", userHandler.SetIsActive)
+	mux.HandleFunc("GET /users/getReview", userHandler.GetReviews)
 	mux.HandleFunc("POST /team/add", teamHandler.AddTeam)
 	mux.HandleFunc("GET /team/get", teamHandler.GetTeam)
-
-	res, err := db.Exec("INSERT INTO teams VALUES ($1), ('Name 2'), ('Surprise Name 3')", "Name 1")
-	if err != nil {
-		slog.Error(err.Error())
-	}
-	rows, _ := res.RowsAffected()
-	slog.Info(fmt.Sprintf("Insert %v rows", rows))
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		slog.Info(r.RequestURI)

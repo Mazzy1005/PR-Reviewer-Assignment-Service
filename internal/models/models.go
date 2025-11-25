@@ -4,24 +4,6 @@ import (
 	"time"
 )
 
-type ErrorResponseErrorCode string
-
-const (
-	TEAM_EXISTS  ErrorResponseErrorCode = "TEAM_EXISTS"
-	PR_EXISTS    ErrorResponseErrorCode = "PR_EXISTS"
-	PR_MERGED    ErrorResponseErrorCode = "PR_MERGED"
-	NOT_ASSIGNED ErrorResponseErrorCode = "NOT_ASSIGNED"
-	NO_CANDIDATE ErrorResponseErrorCode = "NO_CANDIDATE"
-	NOT_FOUND    ErrorResponseErrorCode = "NOT_FOUND"
-)
-
-type ErrorResponse struct {
-	Error struct {
-		Code    ErrorResponseErrorCode `json:"code"`
-		Message string                 `json:"message"`
-	} `json:"error"`
-}
-
 type PullRequestStatus string
 
 const (
@@ -87,4 +69,17 @@ type GetUsersGetReviewParams struct {
 type PostUsersSetIsActiveJSONBody struct {
 	UserId   string `json:"user_id"`
 	IsActive bool   `json:"is_active"`
+}
+
+type ReassignResponse struct {
+	PR         *PullRequest `json:"pr"`
+	ReplacedBy string       `json:"replaced_by"`
+}
+
+type GetUserReviewsResponse struct {
+	PullRequests []PullRequestShort `json:"pull_requests"`
+}
+
+type PostUsersSetIsActiveResponse struct {
+	User User `json:"user"`
 }

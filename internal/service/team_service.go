@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 
 	"github.com/Mazzy1005/PR-Reviewer-Assignment-Service/internal/models"
 )
@@ -22,15 +21,9 @@ func NewTeamService(teamRepo TeamRepository) *TeamService {
 }
 
 func (s *TeamService) AddTeam(ctx context.Context, team *models.Team) error {
-	if team.TeamName == "" {
-		return errors.New("empty name") // TODO добавить ошибку
-	}
 	return s.teamRepo.UpsertTeam(ctx, team)
 }
 
 func (s *TeamService) GetTeam(ctx context.Context, teamName string) (*models.Team, error) {
-	if teamName == "" {
-		return nil, errors.New("empty name") // TODO добавить ошибку
-	}
 	return s.teamRepo.GetTeamByName(ctx, teamName)
 }

@@ -19,12 +19,12 @@ func NewTeamHandler(teamService *service.TeamService) *TeamHandler {
 func (h *TeamHandler) AddTeam(w http.ResponseWriter, r *http.Request) {
 	var team models.Team
 	if err := json.NewDecoder(r.Body).Decode(&team); err != nil {
-		writeError(w, http.StatusBadRequest, models.TEAM_EXISTS, "invalid json")
+		writeError(w, models.ValidationError{Message: "invalid json"})
 		return
 	}
 
 	if err := h.teamService.AddTeam(r.Context(), &team); err != nil {
-		writeError(w, http.StatusBadRequest, models.TEAM_EXISTS, "team_name already exists")
+		writeError(w, err)
 		return
 	}
 
@@ -34,36 +34,15 @@ func (h *TeamHandler) AddTeam(w http.ResponseWriter, r *http.Request) {
 func (h *TeamHandler) GetTeam(w http.ResponseWriter, r *http.Request) {
 	teamName := r.URL.Query().Get("team_name")
 	if teamName == "" {
-		writeError(w, http.StatusBadRequest, models.NOT_FOUND, "team_name is required")
+		writeError(w, models.ValidationError{Message: "team_name is required"})
 		return
 	}
 
 	team, err := h.teamService.GetTeam(r.Context(), teamName)
 	if err != nil {
-		writeError(w, http.StatusNotFound, models.NOT_FOUND, "team not found")
+		writeError(w, err)
 		return
 	}
 
 	writeJSON(w, http.StatusOK, map[string]any{"team": team})
-}
-
-// TODO: вынести в отдельный файл
-func writeJSON(w http.ResponseWriter, status int, data any) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(data)
-}
-
-func writeError(w http.ResponseWriter, status int, code models.ErrorResponseErrorCode, message string) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(models.ErrorResponse{
-		Error: struct {
-			Code    models.ErrorResponseErrorCode `json:"code"`
-			Message string                        `json:"message"`
-		}{
-			Code:    code,
-			Message: message,
-		},
-	})
 }
