@@ -29,7 +29,7 @@ func (h *PullRequestHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, pr)
+	writeJSON(w, http.StatusCreated, map[string]any{"pr": pr})
 }
 
 func (h *PullRequestHandler) Reassign(w http.ResponseWriter, r *http.Request) {
@@ -61,5 +61,5 @@ func (h *PullRequestHandler) Merge(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, pr)
+	writeJSON(w, http.StatusOK, map[string]any{"pr": pr})
 }

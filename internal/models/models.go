@@ -21,8 +21,8 @@ type PullRequestShort struct {
 type PullRequest struct {
 	PullRequestShort
 	AssignedReviewers []string   `json:"assigned_reviewers"`
-	CreatedAt         *time.Time `json:"createdAt"`
-	MergedAt          *time.Time `json:"mergedAt"`
+	CreatedAt         *time.Time `json:"-"`
+	MergedAt          *time.Time `json:"mergedAt,omitempty"`
 }
 
 type TeamMember struct {
