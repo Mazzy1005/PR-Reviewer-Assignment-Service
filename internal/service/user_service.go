@@ -24,16 +24,14 @@ func NewUserService(userRepo UserRepository, prRepo PullRequestRepository) *User
 	}
 }
 
-// SetIsActive — /users/setIsActive
 func (s *UserService) SetIsActive(ctx context.Context, userID string, isActive bool) (*models.User, error) {
 	return s.userRepo.SetUserActive(ctx, userID, isActive)
 }
 
-// GetReviews — /users/getReview?user_id=...
 func (s *UserService) GetReviews(ctx context.Context, userID string) (*models.GetUserReviewsResponse, error) {
 	prs, err := s.prRepo.GetUserReviews(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
-	return &models.GetUserReviewsResponse{PullRequests: prs}, nil
+	return &models.GetUserReviewsResponse{UserID: userID, PullRequests: prs}, nil
 }

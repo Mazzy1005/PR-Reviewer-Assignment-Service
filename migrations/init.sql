@@ -26,3 +26,8 @@ CREATE TABLE pr_reviewers (
     assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (pr_id, reviewer_id)
 );
+
+
+CREATE INDEX idx_users_team_id ON users(team_id);
+CREATE INDEX idx_users_active ON users(is_active) WHERE is_active = true;
+CREATE INDEX idx_users_team_active ON users(team_id) WHERE is_active = true;
